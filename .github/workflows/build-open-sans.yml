@@ -1,0 +1,122 @@
+name: Build Open Sans wall
+
+on:
+  push:
+    paths:
+      - "tools/build_open_sans.py"
+      - ".github/workflows/build-open-sans.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-open-sans-wall
+  cancel-in-progress: true
+
+jobs:
+  build-and-qc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone tested source wall
+        run: git clone --depth 1 https://github.com/creative-innovation-labs-bmc/aurecon-split-flap-wall.git /tmp/aurecon-split-flap-wall-source
+
+      - name: Download official Open Sans and licence
+        run: |
+          mkdir -p fonts
+          curl --fail --location --retry 3 \
+            "https://raw.githubusercontent.com/google/fonts/main/ofl/opensans/OpenSans%5Bwdth%2Cwght%5D.ttf" \
+            --output fonts/OpenSans-Variable.ttf
+          curl --fail --location --retry 3 \
+            "https://raw.githubusercontent.com/google/fonts/main/ofl/opensans/OFL.txt" \
+            --output fonts/OFL.txt
+
+      - name: Build Open Sans variant
+        run: python3 tools/build_open_sans.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Chromium QC runtime
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+
+      - name: Run native 3840x804 QC
+        run: |
+          mkdir -p qc
+          python3 -m http.server 8000 >/tmp/open-sans-wall-server.log 2>&1 &
+          sleep 2
+          cat > /tmp/qc-open-sans.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const report = { passed: false, checks: {}, errors: [], randomInitial: [] };
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 3840, height: 804 } });
+          page.on('pageerror', error => report.errors.push(String(error)));
+          page.on('console', message => {
+            if (message.type() === 'error') report.errors.push(message.text());
+          });
+
+          try {
+            await page.goto('http://127.0.0.1:8000/49x7.html?noanim=1&cycle=0&temp=17.4&condition=CLEAR&winddir=WNW&wind=15&hum=58&rain=0.2', { waitUntil: 'networkidle' });
+            await page.waitForSelector('.flap[data-coord]');
+            const fixed = await page.evaluate(() => {
+              const stage = document.querySelector('#stage');
+              const span = document.querySelector('.panel span');
+              const rect = stage.getBoundingClientRect();
+              return {
+                flapCount: document.querySelectorAll('.flap[data-coord]').length,
+                stageWidth: Math.round(rect.width),
+                stageHeight: Math.round(rect.height),
+                fontFamily: getComputedStyle(span).fontFamily,
+                fontWeight: getComputedStyle(span).fontWeight,
+                fontLoaded: document.fonts.check('400 34px "Open Sans"')
+              };
+            });
+            await page.screenshot({ path: 'qc/open-sans-fixed-3840x804.png' });
+
+            await page.goto('http://127.0.0.1:8000/49x7-random.html?seed=37&noanim=1&cycle=0&temp=17.4&condition=CLEAR&winddir=WNW&wind=15&hum=58&rain=0.2', { waitUntil: 'networkidle' });
+            await page.waitForFunction(() => window.__randomOfficeState?.current?.length === 4);
+            const random = await page.evaluate(() => structuredClone(window.__randomOfficeState));
+            await page.screenshot({ path: 'qc/open-sans-random-3840x804.png' });
+
+            report.randomInitial = random.current;
+            report.checks = {
+              flapCount: fixed.flapCount === 343,
+              nativeStage: fixed.stageWidth === 3840 && fixed.stageHeight === 804,
+              openSansApplied: fixed.fontFamily.includes('Open Sans'),
+              openSansLoaded: fixed.fontLoaded,
+              regularWeight: fixed.fontWeight === '400',
+              randomUnique: new Set(random.current).size === 4,
+              randomNotDefault: random.current.join('|') !== 'ADELAIDE|BRISBANE|CAIRNS|CANBERRA',
+              noPageErrors: report.errors.length === 0
+            };
+            report.details = { fixed, random };
+            report.passed = Object.values(report.checks).every(Boolean);
+            if (!report.passed) process.exitCode = 1;
+          } finally {
+            report.finishedAt = new Date().toISOString();
+            fs.writeFileSync('qc/open-sans-report.json', JSON.stringify(report, null, 2) + '\n');
+            await browser.close();
+          }
+          EOF
+          node /tmp/qc-open-sans.mjs
+
+      - name: Commit completed build
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Build and QC Open Sans split-flap wall [skip ci]"
+          git push
