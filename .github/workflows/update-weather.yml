@@ -1,0 +1,52 @@
+name: Update BOM weather
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bom-weather-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch Melbourne weather
+        run: python scripts/fetch_weather.py
+      - name: Commit changed weather data
+        shell: bash
+        run: |
+          if git diff --quiet -- weather.json; then
+            echo "No weather change"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add weather.json
+          git commit -m "Update weather data [skip ci]"
+
+          for attempt in 1 2 3; do
+            if git pull --rebase -X theirs origin main && git push; then
+              echo "Weather update pushed"
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            echo "Push attempt ${attempt} failed; retrying"
+            sleep 5
+          done
+
+          echo "Could not push this weather sample. A later scheduled run will retry."
+          exit 0
