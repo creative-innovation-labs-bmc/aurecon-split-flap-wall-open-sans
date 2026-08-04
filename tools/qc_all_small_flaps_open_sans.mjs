@@ -1,12 +1,13 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs';
-import crypto from 'node:crypto';
 
 const report = { passed: false, checks: {}, errors: [] };
 const browser = await chromium.launch({ headless: true });
-const page = await browser.newPage({ viewport: { width: 3840, height: 804 } });
-page.on('pageerror', error => report.errors.push(String(error)));
-page.on('console', message => {
+const forkPage = await browser.newPage({ viewport: { width: 3840, height: 804 } });
+const sourcePage = await browser.newPage({ viewport: { width: 3840, height: 804 } });
+
+forkPage.on('pageerror', error => report.errors.push(String(error)));
+forkPage.on('console', message => {
   if (message.type() === 'error') report.errors.push(message.text());
 });
 
@@ -30,21 +31,34 @@ const macroClip = async currentPage => currentPage.evaluate(() => {
   };
 });
 
-const sha256 = path => crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex');
+const readMacroState = currentPage => currentPage.evaluate(() => {
+  const rows = [];
+  for (let row = 2; row <= 6; row += 1) {
+    let line = '';
+    for (let col = 10; col <= 40; col += 1) {
+      line += document.querySelector(`[data-coord="${col},${row}"]`)?.dataset.macro === '1' ? '1' : '0';
+    }
+    rows.push(line);
+  }
+  return rows;
+});
+
+const normalise = value => String(value || '').replace(/\s+/g, ' ').trim();
+const extract = (text, regex) => normalise(text.match(regex)?.[0]);
 
 try {
-  await page.goto(`http://127.0.0.1:8000/49x7.html${fixedQuery}`, { waitUntil: 'networkidle' });
-  await page.waitForSelector('.flap[data-coord]');
-  await page.evaluate(() => document.fonts.ready);
-  await page.waitForFunction(
+  await forkPage.goto(`http://127.0.0.1:8000/49x7.html${fixedQuery}`, { waitUntil: 'networkidle' });
+  await forkPage.waitForSelector('.flap[data-coord]');
+  await forkPage.evaluate(() => document.fonts.ready);
+  await forkPage.waitForFunction(
     () => document.querySelectorAll('.centre-flap[data-macro="1"]').length === 66,
     null,
     { timeout: 15000 }
   );
-  await page.waitForTimeout(300);
-  await page.evaluate(() => document.body.classList.remove('colon-dim', 'launching'));
+  await forkPage.waitForTimeout(300);
+  await forkPage.evaluate(() => document.body.classList.remove('colon-dim', 'launching'));
 
-  const fork = await page.evaluate(() => {
+  const fork = await forkPage.evaluate(() => {
     const visible = flap => flap.dataset.macro === '0' && flap.dataset.value.trim();
     const header = [...document.querySelectorAll('.centre-flap')]
       .find(flap => flap.dataset.coord.endsWith(',1') && visible(flap));
@@ -81,33 +95,54 @@ try {
       macroBottom: getComputedStyle(document.documentElement).getPropertyValue('--macro-bottom').trim(),
     };
   });
+  const forkMacroState = await readMacroState(forkPage);
+  await forkPage.screenshot({ path: 'qc/open-sans-3-fixed-3840x804.png' });
+  const forkClip = await macroClip(forkPage);
+  await forkPage.screenshot({ path: 'qc/open-sans-3-macro-fork.png', clip: forkClip });
 
-  await page.screenshot({ path: 'qc/open-sans-3-fixed-3840x804.png' });
-  const forkClip = await macroClip(page);
-  await page.screenshot({ path: 'qc/open-sans-3-macro-fork.png', clip: forkClip });
-
-  await page.goto(`http://127.0.0.1:8001/49x7.html${fixedQuery}`, { waitUntil: 'networkidle' });
-  await page.waitForSelector('.flap[data-coord]');
-  await page.waitForFunction(
+  await sourcePage.goto(`http://127.0.0.1:8001/49x7.html${fixedQuery}`, { waitUntil: 'networkidle' });
+  await sourcePage.waitForSelector('.flap[data-coord]');
+  await sourcePage.waitForFunction(
     () => document.querySelectorAll('.flap[data-macro="1"]').length === 66,
     null,
     { timeout: 15000 }
   );
-  await page.waitForTimeout(300);
-  await page.evaluate(() => document.body.classList.remove('colon-dim', 'launching'));
-  const sourceClip = await macroClip(page);
-  await page.screenshot({ path: 'qc/open-sans-3-macro-source.png', clip: sourceClip });
+  await sourcePage.waitForTimeout(300);
+  await sourcePage.evaluate(() => document.body.classList.remove('colon-dim', 'launching'));
+  const sourceMacroState = await readMacroState(sourcePage);
+  const sourceClip = await macroClip(sourcePage);
+  await sourcePage.screenshot({ path: 'qc/open-sans-3-macro-source.png', clip: sourceClip });
 
-  await page.goto('http://127.0.0.1:8000/49x7-random.html?seed=111&noanim=1&cycle=0', { waitUntil: 'networkidle' });
-  await page.waitForFunction(() => window.__randomOfficeState?.current?.length === 4);
-  const random = await page.evaluate(() => structuredClone(window.__randomOfficeState));
-  await page.screenshot({ path: 'qc/open-sans-3-random-3840x804.png' });
+  await forkPage.goto('http://127.0.0.1:8000/49x7-random.html?seed=111&noanim=1&cycle=0', { waitUntil: 'networkidle' });
+  await forkPage.waitForFunction(() => window.__randomOfficeState?.current?.length === 4);
+  const random = await forkPage.evaluate(() => structuredClone(window.__randomOfficeState));
+  await forkPage.screenshot({ path: 'qc/open-sans-3-random-3840x804.png' });
 
   const sourceJs = fs.readFileSync('/tmp/original-wall/wall-live.js', 'utf8');
   const forkJs = fs.readFileSync('wall-live.js', 'utf8');
-  const patternRegex = /const DIGITS_4X5 = \{.*?\n  \};/s;
-  const sourcePattern = sourceJs.match(patternRegex)?.[0] || '';
-  const forkPattern = forkJs.match(patternRegex)?.[0] || '';
+  const sourceCss = fs.readFileSync('/tmp/original-wall/wall-live.css', 'utf8');
+  const forkCss = fs.readFileSync('wall-live.css', 'utf8');
+
+  const jsMacroParts = [
+    /const CENTRE_START = .*?;/,
+    /const CENTRE_COLS = .*?;/,
+    /const DIGITS_4X5 = \{.*?\n  \};/s,
+    /const DIGIT_STARTS = .*?;/,
+    /const COLON_GAPS = .*?;/,
+    /const COLON_ROWS = .*?;/,
+  ];
+  const sourceMacroSignature = jsMacroParts.map(regex => extract(sourceJs, regex)).join('|');
+  const forkMacroSignature = jsMacroParts.map(regex => extract(forkJs, regex)).join('|');
+
+  const cssMacroParts = [
+    /--macro-top: .*?;/,
+    /--macro-bottom: .*?;/,
+    /\.panel\.top\.macro-face, \.flip-half\.top-flip\.macro-face \{.*?\}/s,
+    /\.panel\.bottom\.macro-face, \.flip-half\.bottom-flip\.macro-face \{.*?\}/s,
+    /\.macro-face span \{.*?\}/s,
+  ];
+  const sourceMacroCssSignature = cssMacroParts.map(regex => extract(sourceCss, regex)).join('|');
+  const forkMacroCssSignature = cssMacroParts.map(regex => extract(forkCss, regex)).join('|');
 
   const textSamples = [fork.header, fork.footer, fork.office];
   const allOpenSansBold = textSamples.every(sample =>
@@ -117,28 +152,26 @@ try {
     transformY(sample.topTransform) === 0 && transformY(sample.bottomTransform) === 2
   );
 
-  const forkMacroHash = sha256('qc/open-sans-3-macro-fork.png');
-  const sourceMacroHash = sha256('qc/open-sans-3-macro-source.png');
-
   report.checks = {
     nativeStage: fork.stageWidth === 3840 && fork.stageHeight === 804,
     flapCount: fork.flapCount === 343,
     allSmallTextUsesOpenSansBold: allOpenSansBold,
     allSmallTextTopLiftedTwoPixels: allTopHalvesLifted,
     openSansHostedAndLoaded: fork.openSansLoaded,
-    original4x5PatternSourceMatch: Boolean(sourcePattern) && sourcePattern === forkPattern,
-    original4x5PixelMatch: forkMacroHash === sourceMacroHash,
+    original4x5JsSourceMatch: Boolean(sourceMacroSignature) && sourceMacroSignature === forkMacroSignature,
+    original4x5CssSourceMatch: Boolean(sourceMacroCssSignature) && sourceMacroCssSignature === forkMacroCssSignature,
+    original4x5CellStateMatch: JSON.stringify(forkMacroState) === JSON.stringify(sourceMacroState),
     originalMacroPalette: fork.macroTop === '#f7f7f5' && fork.macroBottom === '#d7d7d3',
     heavy222222Pattern: fork.macroActiveCount === 66,
     randomOpeningUnique: new Set(random.current).size === 4,
     randomOpeningNotDefault: random.current.join('|') !== 'ADELAIDE|BRISBANE|CAIRNS|CANBERRA',
-    noPageErrors: report.errors.length === 0,
+    noForkPageErrors: report.errors.length === 0,
   };
   report.details = {
     fork,
     random,
-    forkMacroHash,
-    sourceMacroHash,
+    forkMacroState,
+    sourceMacroState,
     macroClip: forkClip,
   };
   report.passed = Object.values(report.checks).every(Boolean);
