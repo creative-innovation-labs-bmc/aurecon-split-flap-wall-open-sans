@@ -1,6 +1,62 @@
 {
-  "passed": false,
-  "checks": {},
+  "passed": true,
+  "checks": {
+    "nativeStage": true,
+    "flapCount": true,
+    "zoneCounts": true,
+    "heavy222222Pattern": true,
+    "centreUsesOriginalFace": true,
+    "centreUsesOriginalMetrics": true,
+    "officeUsesOpenSans": true,
+    "officeUsesBold": true,
+    "officeFontSize": true,
+    "officeTopLiftedTwoPixels": true,
+    "openSansHostedAndLoaded": true,
+    "mpbHostedAndLoaded": true,
+    "randomUnique": true,
+    "noPageErrors": true
+  },
   "errors": [],
-  "finishedAt": "2026-08-04T13:45:08.885Z"
+  "details": {
+    "fixed": {
+      "stageWidth": 3840,
+      "stageHeight": 804,
+      "flapCount": 343,
+      "centreFlaps": 231,
+      "officeFlaps": 112,
+      "macroActiveCount": 66,
+      "centreFontFamily": "MP-B, \"Arial Narrow\", Arial, sans-serif",
+      "centreFontSize": "38px",
+      "centreFontWeight": "400",
+      "centreTransform": "matrix(1, 0, 0, 1, 0, 4)",
+      "officeFontFamily": "\"Open Sans\", Arial, sans-serif",
+      "officeFontSize": "34px",
+      "officeFontWeight": "700",
+      "officeTopTransform": "matrix(1, 0, 0, 1, 0, 0)",
+      "officeBottomTransform": "matrix(1, 0, 0, 1, 0, 2)",
+      "openSansLoaded": true,
+      "mpbLoaded": true
+    },
+    "random": {
+      "current": [
+        "GLADSTON",
+        "HONGKONG",
+        "PETALING",
+        "HAMILTON"
+      ],
+      "seen": [
+        5,
+        16,
+        20,
+        23
+      ],
+      "seenCount": 4,
+      "deckIndex": 4,
+      "deckLength": 30
+    },
+    "officeTopY": 0,
+    "officeBottomY": 2,
+    "centreY": 4
+  },
+  "finishedAt": "2026-08-04T13:47:10.292Z"
 }
