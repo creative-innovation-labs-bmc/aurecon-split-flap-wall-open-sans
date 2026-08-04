@@ -21,7 +21,7 @@ try {
   await page.waitForSelector('.flap[data-coord]');
   await page.evaluate(() => document.fonts.ready);
   await page.waitForFunction(
-    () => document.querySelectorAll('.centre-flap[data-macro="1"]').length === 72,
+    () => document.querySelectorAll('.centre-flap[data-macro="1"]').length === 66,
     null,
     { timeout: 12000 }
   );
@@ -70,7 +70,7 @@ try {
     nativeStage: fixed.stageWidth === 3840 && fixed.stageHeight === 804,
     flapCount: fixed.flapCount === 343,
     zoneCounts: fixed.centreFlaps === 231 && fixed.officeFlaps === 112,
-    heavy222222Pattern: fixed.macroActiveCount === 72,
+    heavy222222Pattern: fixed.macroActiveCount === 66,
     centreUsesOriginalFace: fixed.centreFontFamily.includes('MP-B'),
     centreUsesOriginalMetrics: fixed.centreFontSize === '38px' && fixed.centreFontWeight === '400' && centreY === 4,
     officeUsesOpenSans: fixed.officeFontFamily.includes('Open Sans'),
