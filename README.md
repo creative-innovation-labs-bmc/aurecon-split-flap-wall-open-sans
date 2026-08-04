@@ -37,3 +37,11 @@ Fork-style derivative of `creative-innovation-labs-bmc/aurecon-split-flap-wall`.
 - The upper half of each text glyph is lifted 2 px for hinge legibility.
 - The large Melbourne HH:MM:SS remains the original pre-fork 4 × 5 illuminated-flap matrix.
 - Open Sans and its OFL licence are stored locally under `fonts/`.
+
+## Typography
+
+- All smaller text flaps use self-hosted Open Sans Bold at 34 px.
+- This includes office names, country codes, office times, Melbourne header and weather footer.
+- The upper half of each text glyph is lifted 2 px for hinge legibility.
+- The large Melbourne HH:MM:SS remains the original pre-fork 4 × 5 illuminated-flap matrix.
+- Open Sans and its OFL licence are stored locally under `fonts/`.
