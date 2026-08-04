@@ -1,0 +1,19 @@
+{
+  "source": "Open-Meteo model fallback",
+  "station": "850 Collins Street, Docklands",
+  "station_wmo": null,
+  "status": "ok",
+  "temp_c": 8.4,
+  "apparent_temp_c": 6.5,
+  "condition": "PARTLY",
+  "wind_dir": "WNW",
+  "wind_kmh": 8,
+  "gust_kmh": null,
+  "humidity_pct": 92,
+  "rain_since_9am_mm": 5.9,
+  "pressure_hpa": null,
+  "observation_local": "2026-08-04T23:00",
+  "observation_utc": "2026-08-04T13:00:56.932242Z",
+  "updated_utc": "2026-08-04T13:00:56.932242Z",
+  "copyright": "Weather model data provided by Open-Meteo"
+}

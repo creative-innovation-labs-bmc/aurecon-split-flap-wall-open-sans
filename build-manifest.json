@@ -1,0 +1,14 @@
+{
+  "font_family": "Open Sans",
+  "font_file": "fonts/OpenSans-Variable.ttf",
+  "font_weight": 400,
+  "native_stage": [
+    3840,
+    804
+  ],
+  "grid": [
+    49,
+    7
+  ],
+  "source_repository": "creative-innovation-labs-bmc/aurecon-split-flap-wall"
+}

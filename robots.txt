@@ -1,2 +1,3 @@
+# Crawlers must be allowed to read the page-level noindex directives.
 User-agent: *
-Disallow: /
+Allow: /
