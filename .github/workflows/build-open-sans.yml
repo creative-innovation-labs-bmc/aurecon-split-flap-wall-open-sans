@@ -49,10 +49,10 @@ jobs:
 
       - name: Run native 3840x804 QC
         run: |
-          mkdir -p qc
+          mkdir -p qc tools
           python3 -m http.server 8000 >/tmp/open-sans-wall-server.log 2>&1 &
           sleep 2
-          cat > /tmp/qc-open-sans.mjs <<'EOF'
+          cat > tools/qc-open-sans.mjs <<'EOF'
           import { chromium } from 'playwright';
           import fs from 'node:fs';
 
@@ -61,12 +61,15 @@ jobs:
           const page = await browser.newPage({ viewport: { width: 3840, height: 804 } });
           page.on('pageerror', error => report.errors.push(String(error)));
           page.on('console', message => {
-            if (message.type() === 'error') report.errors.push(message.text());
+            if (message.type() === 'error' && !message.text().includes('favicon')) {
+              report.errors.push(message.text());
+            }
           });
 
           try {
             await page.goto('http://127.0.0.1:8000/49x7.html?noanim=1&cycle=0&temp=17.4&condition=CLEAR&winddir=WNW&wind=15&hum=58&rain=0.2', { waitUntil: 'networkidle' });
             await page.waitForSelector('.flap[data-coord]');
+            await page.evaluate(() => document.fonts.ready);
             const fixed = await page.evaluate(() => {
               const stage = document.querySelector('#stage');
               const span = document.querySelector('.panel span');
@@ -77,6 +80,7 @@ jobs:
                 stageHeight: Math.round(rect.height),
                 fontFamily: getComputedStyle(span).fontFamily,
                 fontWeight: getComputedStyle(span).fontWeight,
+                fontSize: getComputedStyle(span).fontSize,
                 fontLoaded: document.fonts.check('400 34px "Open Sans"')
               };
             });
@@ -84,6 +88,7 @@ jobs:
 
             await page.goto('http://127.0.0.1:8000/49x7-random.html?seed=37&noanim=1&cycle=0&temp=17.4&condition=CLEAR&winddir=WNW&wind=15&hum=58&rain=0.2', { waitUntil: 'networkidle' });
             await page.waitForFunction(() => window.__randomOfficeState?.current?.length === 4);
+            await page.evaluate(() => document.fonts.ready);
             const random = await page.evaluate(() => structuredClone(window.__randomOfficeState));
             await page.screenshot({ path: 'qc/open-sans-random-3840x804.png' });
 
@@ -94,6 +99,7 @@ jobs:
               openSansApplied: fixed.fontFamily.includes('Open Sans'),
               openSansLoaded: fixed.fontLoaded,
               regularWeight: fixed.fontWeight === '400',
+              expectedFontSize: fixed.fontSize === '34px',
               randomUnique: new Set(random.current).size === 4,
               randomNotDefault: random.current.join('|') !== 'ADELAIDE|BRISBANE|CAIRNS|CANBERRA',
               noPageErrors: report.errors.length === 0
@@ -103,11 +109,16 @@ jobs:
             if (!report.passed) process.exitCode = 1;
           } finally {
             report.finishedAt = new Date().toISOString();
-            fs.writeFileSync('qc/open-sans-report.json', JSON.stringify(report, null, 2) + '\n');
+            fs.writeFileSync('qc/open-sans-report.json', `${JSON.stringify(report, null, 2)}\n`);
             await browser.close();
           }
           EOF
-          node /tmp/qc-open-sans.mjs
+          node tools/qc-open-sans.mjs
+
+      - name: Remove temporary QC dependencies
+        if: always()
+        run: |
+          rm -rf node_modules package.json package-lock.json tools/qc-open-sans.mjs
 
       - name: Commit completed build
         if: always()
