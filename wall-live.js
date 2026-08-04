@@ -245,6 +245,11 @@
   function createFlap(row, col) {
     const flap = document.createElement('div');
     flap.className = 'flap';
+    flap.classList.add(
+      col >= CENTRE_START && col < CENTRE_START + CENTRE_COLS
+        ? 'centre-flap'
+        : 'office-flap'
+    );
     flap.dataset.value = ' ';
     flap.dataset.macro = '0';
     flap.dataset.coord = `${col + 1},${row + 1}`;

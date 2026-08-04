@@ -30,6 +30,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "MP-B";
+  src: url("fonts/MP-B.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
 * { box-sizing: border-box; }
 html, body {
   width: 100%;
@@ -67,8 +75,8 @@ body {
   --flap-h: 90px;
   --gap-x: 6px;
   --gap-y: 7px;
-  --cell-font: 34px;
-  --cell-font-y: 2px;
+  --cell-font: 38px;
+  --cell-font-y: 4px;
   position: absolute;
   left: var(--board-x);
   top: var(--board-y);
@@ -169,9 +177,9 @@ body {
   justify-content: center;
   transform: translateY(var(--cell-font-y));
   color: var(--white);
-  font-family: "Open Sans", Arial, sans-serif;
+  font-family: "MP-B", "Arial Narrow", Arial, sans-serif;
   font-size: var(--cell-font);
-  font-weight: 400;
+  font-weight: normal;
   line-height: 1;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
@@ -330,3 +338,34 @@ body.shield-mode .mini-colon::after {
   from { transform: rotateX(90deg); }
   to { transform: rotateX(0deg); }
 }
+
+/* OPEN SANS OFFICE ZONES START */
+/* Centre remains visually identical to the established MP-B production wall. */
+.centre-flap span {
+  font-family: "MP-B", "Arial Narrow", Arial, sans-serif;
+  font-size: 38px;
+  font-weight: normal;
+  transform: translateY(4px);
+}
+
+/* Only the smaller left and right office flaps use Open Sans Bold. */
+.office-flap span {
+  font-family: "Open Sans", Arial, sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  transform: translateY(2px);
+  letter-spacing: 0;
+}
+
+/* Lift the upper glyph half by 2px to close the hinge interruption. */
+.office-flap .panel.top span,
+.office-flap .flip-half.top-flip span {
+  transform: translateY(0);
+}
+
+.office-flap .panel.bottom span,
+.office-flap .flip-half.bottom-flip span {
+  transform: translateY(2px);
+}
+/* OPEN SANS OFFICE ZONES END */
+
