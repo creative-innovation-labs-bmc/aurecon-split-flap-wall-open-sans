@@ -1,0 +1,81 @@
+{
+  "passed": false,
+  "checks": {
+    "nativeStage": true,
+    "flapCount": true,
+    "allSmallTextUsesOpenSansBold": true,
+    "allSmallTextTopLiftedTwoPixels": true,
+    "openSansHostedAndLoaded": true,
+    "original4x5PatternSourceMatch": true,
+    "original4x5PixelMatch": false,
+    "originalMacroPalette": true,
+    "heavy222222Pattern": true,
+    "randomOpeningUnique": true,
+    "randomOpeningNotDefault": true,
+    "noPageErrors": false
+  },
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "details": {
+    "fork": {
+      "stageWidth": 3840,
+      "stageHeight": 804,
+      "flapCount": 343,
+      "macroActiveCount": 66,
+      "header": {
+        "value": "M",
+        "family": "\"Open Sans\", Arial, sans-serif",
+        "weight": "700",
+        "size": "34px",
+        "topTransform": "matrix(1, 0, 0, 1, 0, 0)",
+        "bottomTransform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      "footer": {
+        "value": "W",
+        "family": "\"Open Sans\", Arial, sans-serif",
+        "weight": "700",
+        "size": "34px",
+        "topTransform": "matrix(1, 0, 0, 1, 0, 0)",
+        "bottomTransform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      "office": {
+        "value": "A",
+        "family": "\"Open Sans\", Arial, sans-serif",
+        "weight": "700",
+        "size": "34px",
+        "topTransform": "matrix(1, 0, 0, 1, 0, 0)",
+        "bottomTransform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      "openSansLoaded": true,
+      "macroTop": "#f7f7f5",
+      "macroBottom": "#d7d7d3"
+    },
+    "random": {
+      "current": [
+        "MACKAY",
+        "AUCKLAND",
+        "SHANGHAI",
+        "TAURANGA"
+      ],
+      "seen": [
+        7,
+        21,
+        15,
+        24
+      ],
+      "seenCount": 4,
+      "deckIndex": 4,
+      "deckLength": 30
+    },
+    "forkMacroHash": "387de584d9fff63611149e2fda962e45be91649c292a346fdd5cf30c9f38336b",
+    "sourceMacroHash": "bcc87ff9e8fc18770204006b1d6e9117c6bb998edeb0b51bbca9f1eec41c39ad",
+    "macroClip": {
+      "x": 726,
+      "y": 163,
+      "width": 2388,
+      "height": 478
+    }
+  },
+  "finishedAt": "2026-08-04T14:10:32.569Z"
+}

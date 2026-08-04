@@ -30,9 +30,10 @@ The large Melbourne clock remains a 4 × 5 illuminated-flap bitmap, so its numer
 
 Fork-style derivative of `creative-innovation-labs-bmc/aurecon-split-flap-wall`. The source production repository is not modified by this version.
 
-## Typography zones
+## Typography
 
-- Melbourne centre: original MP-B face and 38 px production metrics.
-- Left and right office flaps: self-hosted Open Sans Bold at 34 px.
-- The upper half of each office glyph is lifted 2 px for hinge legibility.
-- Both font files are stored locally under `fonts/`.
+- All smaller text flaps use self-hosted Open Sans Bold at 34 px.
+- This includes office names, country codes, office times, Melbourne header and weather footer.
+- The upper half of each text glyph is lifted 2 px for hinge legibility.
+- The large Melbourne HH:MM:SS remains the original pre-fork 4 × 5 illuminated-flap matrix.
+- Open Sans and its OFL licence are stored locally under `fonts/`.

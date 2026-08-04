@@ -30,13 +30,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "MP-B";
-  src: url("fonts/MP-B.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
-}
 
 * { box-sizing: border-box; }
 html, body {
@@ -75,8 +68,8 @@ body {
   --flap-h: 90px;
   --gap-x: 6px;
   --gap-y: 7px;
-  --cell-font: 38px;
-  --cell-font-y: 4px;
+  --cell-font: 34px;
+  --cell-font-y: 2px;
   position: absolute;
   left: var(--board-x);
   top: var(--board-y);
@@ -177,9 +170,9 @@ body {
   justify-content: center;
   transform: translateY(var(--cell-font-y));
   color: var(--white);
-  font-family: "MP-B", "Arial Narrow", Arial, sans-serif;
+  font-family: "Open Sans", Arial, sans-serif;
   font-size: var(--cell-font);
-  font-weight: normal;
+  font-weight: 700;
   line-height: 1;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
@@ -339,17 +332,9 @@ body.shield-mode .mini-colon::after {
   to { transform: rotateX(0deg); }
 }
 
-/* OPEN SANS OFFICE ZONES START */
-/* Centre remains visually identical to the established MP-B production wall. */
-.centre-flap span {
-  font-family: "MP-B", "Arial Narrow", Arial, sans-serif;
-  font-size: 38px;
-  font-weight: normal;
-  transform: translateY(4px);
-}
-
-/* Only the smaller left and right office flaps use Open Sans Bold. */
-.office-flap span {
+/* OPEN SANS SMALL TEXT FLAPS START */
+/* Every visible text flap, including Melbourne header and weather footer. */
+.flap span {
   font-family: "Open Sans", Arial, sans-serif;
   font-size: 34px;
   font-weight: 700;
@@ -357,15 +342,21 @@ body.shield-mode .mini-colon::after {
   letter-spacing: 0;
 }
 
-/* Lift the upper glyph half by 2px to close the hinge interruption. */
-.office-flap .panel.top span,
-.office-flap .flip-half.top-flip span {
+/* Lift the upper glyph half by 2px for a cleaner hinge split. */
+.flap .panel.top span,
+.flap .flip-half.top-flip span {
   transform: translateY(0);
 }
 
-.office-flap .panel.bottom span,
-.office-flap .flip-half.bottom-flip span {
+.flap .panel.bottom span,
+.flap .flip-half.bottom-flip span {
   transform: translateY(2px);
 }
-/* OPEN SANS OFFICE ZONES END */
+
+/* The original 4×5 matrix remains background-driven and font-independent. */
+.macro-face span {
+  color: transparent;
+  text-shadow: none;
+}
+/* OPEN SANS SMALL TEXT FLAPS END */
 
