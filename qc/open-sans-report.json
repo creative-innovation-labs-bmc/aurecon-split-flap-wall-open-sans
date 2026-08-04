@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "checks": {
+    "flapCount": true,
+    "nativeStage": true,
+    "openSansApplied": true,
+    "openSansLoaded": true,
+    "regularWeight": true,
+    "expectedFontSize": true,
+    "randomUnique": true,
+    "randomNotDefault": true,
+    "noPageErrors": true
+  },
+  "errors": [],
+  "randomInitial": [
+    "HONGKONG",
+    "SINGAPOR",
+    "GOLDCOST",
+    "WELLINGT"
+  ],
+  "details": {
+    "fixed": {
+      "flapCount": 343,
+      "stageWidth": 3840,
+      "stageHeight": 804,
+      "fontFamily": "\"Open Sans\", Arial, sans-serif",
+      "fontWeight": "400",
+      "fontSize": "34px",
+      "fontLoaded": true
+    },
+    "random": {
+      "current": [
+        "HONGKONG",
+        "SINGAPOR",
+        "GOLDCOST",
+        "WELLINGT"
+      ],
+      "seen": [
+        16,
+        27,
+        6,
+        25
+      ],
+      "seenCount": 4,
+      "deckIndex": 4,
+      "deckLength": 30
+    }
+  },
+  "finishedAt": "2026-08-04T13:21:10.535Z"
+}
