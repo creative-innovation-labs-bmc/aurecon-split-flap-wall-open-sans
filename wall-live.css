@@ -41,7 +41,7 @@ html, body {
 }
 body {
   color: var(--white);
-  font-family: "Open Sans", Arial, sans-serif;
+  font-family: "Open Sans";
   font-synthesis: none;
 }
 #viewport {
@@ -170,7 +170,7 @@ body {
   justify-content: center;
   transform: translateY(var(--cell-font-y));
   color: var(--white);
-  font-family: "Open Sans", Arial, sans-serif;
+  font-family: "Open Sans";
   font-size: var(--cell-font);
   font-weight: 700;
   line-height: 1;
@@ -335,7 +335,7 @@ body.shield-mode .mini-colon::after {
 /* OPEN SANS SMALL TEXT FLAPS START */
 /* Every visible text flap, including Melbourne header and weather footer. */
 .flap span {
-  font-family: "Open Sans", Arial, sans-serif;
+  font-family: "Open Sans";
   font-size: 34px;
   font-weight: 700;
   transform: translateY(2px);
