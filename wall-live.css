@@ -255,7 +255,7 @@ body.debug #stage::after {
   left: 30px;
   top: 16px;
   color: var(--aurecon-green);
-  font: 22px Arial, sans-serif;
+  font: 22px/1 "Open Sans";
 }
 body.debug .section { outline: 2px dashed rgba(137,201,37,0.72); outline-offset: -2px; }
 body.debug .flap::before {
@@ -265,7 +265,7 @@ body.debug .flap::before {
   left: 3px;
   top: 3px;
   color: rgba(255,255,255,0.28);
-  font: 8px Arial, sans-serif;
+  font: 8px/1 "Open Sans";
 }
 body.debug .zone-divider { width: 2px; background: rgba(137,201,37,0.86); }
 @media (prefers-reduced-motion: reduce) {
@@ -359,4 +359,3 @@ body.shield-mode .mini-colon::after {
   text-shadow: none;
 }
 /* OPEN SANS SMALL TEXT FLAPS END */
-
