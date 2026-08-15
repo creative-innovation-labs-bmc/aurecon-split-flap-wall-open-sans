@@ -6,14 +6,14 @@
   "temp_c": 7.3,
   "apparent_temp_c": 6.1,
   "condition": "CLOUDY",
-  "wind_dir": "NNE",
+  "wind_dir": "N",
   "wind_kmh": 3,
   "gust_kmh": null,
   "humidity_pct": 100,
   "rain_since_9am_mm": 0.0,
   "pressure_hpa": null,
-  "observation_local": "2026-08-16T08:30",
-  "observation_utc": "2026-08-15T22:30:53.533196Z",
-  "updated_utc": "2026-08-15T22:30:53.533196Z",
+  "observation_local": "2026-08-16T08:45",
+  "observation_utc": "2026-08-15T22:58:28.591691Z",
+  "updated_utc": "2026-08-15T22:58:28.591691Z",
   "copyright": "Weather model data provided by Open-Meteo"
 }
