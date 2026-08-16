@@ -3,8 +3,8 @@
   "station": "850 Collins Street, Docklands",
   "station_wmo": null,
   "status": "ok",
-  "temp_c": 7.0,
-  "apparent_temp_c": 5.7,
+  "temp_c": 6.9,
+  "apparent_temp_c": 5.6,
   "condition": "CLOUDY",
   "wind_dir": "N",
   "wind_kmh": 3,
@@ -12,8 +12,8 @@
   "humidity_pct": 97,
   "rain_since_9am_mm": 0.0,
   "pressure_hpa": null,
-  "observation_local": "2026-08-17T05:30",
-  "observation_utc": "2026-08-16T19:32:45.605653Z",
-  "updated_utc": "2026-08-16T19:32:45.605653Z",
+  "observation_local": "2026-08-17T05:45",
+  "observation_utc": "2026-08-16T19:54:23.883856Z",
+  "updated_utc": "2026-08-16T19:54:23.883856Z",
   "copyright": "Weather model data provided by Open-Meteo"
 }
